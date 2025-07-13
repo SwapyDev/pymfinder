@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: pymfinder
+Version: 1.0
+Summary: Python wrapper for mfinder 1.2
+Home-page: http://github.com/stoufferlab/pymfinder
+Author: Daniel B. Stouffer
+Author-email: daniel.stouffer@canterbury.ac.nz
+License-File: LICENSE
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: license-file
+Dynamic: summary

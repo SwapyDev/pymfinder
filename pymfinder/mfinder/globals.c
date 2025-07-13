@@ -10,7 +10,9 @@
  *************************************************************************/
 #include "common.h"
 #include "wrapper.h"
-
+//Missing includes
+#include "clustering.h"
+#include "output.h"
 /*************************** Global variables ****************************/
 
 

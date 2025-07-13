@@ -123,7 +123,8 @@
 
 /* Python.h has to appear first */
 #include <Python.h>
-
+//Missing include
+#include "results.h"
 /* -----------------------------------------------------------------------------
  * swigrun.swg
  *

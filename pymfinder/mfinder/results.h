@@ -4,13 +4,15 @@
 *
 *  Description: Header file
 *  
-*  Copyright © 2002-2004 Weizmann Institute of Science, 
+*  Copyright ï¿½ 2002-2004 Weizmann Institute of Science, 
 *			   76100 Rehovot Israel, All rights reserved 
 *
 *************************************************************************/
 #ifndef __RESULTS_H
 #define __RESULTS_H
-
+//Missing imports
+#include "common.h"
+#include "list.h"
 
 /******************* Definitions ************************/
 
