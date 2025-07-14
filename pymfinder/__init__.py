@@ -10,9 +10,9 @@ __all__ = [
         'pymfinder',
 	]
 
-from pymfinder import list_motifs, print_motifs
-from pymfinder import random_network
-from pymfinder import motif_structure
-from pymfinder import motif_participation
-from pymfinder import motif_roles
-from pymfinder import pymfinder
+from .pymfinder import list_motifs, print_motifs
+from .pymfinder import random_network
+from .pymfinder import motif_structure
+from .pymfinder import motif_participation
+from .pymfinder import motif_roles
+from .pymfinder import pymfinder

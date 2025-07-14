@@ -1,4 +1,3 @@
-
 import sys
 
 ##############################################################
@@ -65,35 +64,35 @@ class NetworkStats(object):
 
     def add_motif(self,motif_id):
         if motif_id in self.motifs:
-            sys.stderr.write("You're trying to add a motif more than once. According to the developers, this is classified as highly unusual.\n")
+            print("You're trying to add a motif more than once. According to the developers, this is classified as highly unusual.", file=sys.stderr)
         else:
             self.motifs[motif_id] = Motif(motif_id)
 
     def add_node(self, node_id, node_name=None):
         if node_id in self.nodes:
-            sys.stderr.write("You're trying to add a node more than once. According to the developers, this is classified as highly unusual.\n")
+            print("You're trying to add a node more than once. According to the developers, this is classified as highly unusual.", file=sys.stderr)
         else:
             self.nodes[node_id] = NodeLink(node_name)
 
     def add_link(self, link_id, link_name=None):
         if link_id in self.links:
-            sys.stderr.write("You're trying to add a link more than once. According to the developers, this is classified as highly unusual.\n")
+            print("You're trying to add a link more than once. According to the developers, this is classified as highly unusual.", file=sys.stderr)
         else:
             self.links[link_id] = NodeLink(link_name)
 
     # DEBUG: it would be nice to be able to turn the header on and off
     def __str__(self):
 
-        from roles import STOUFFER_MOTIF_IDS
+        from .roles import STOUFFER_MOTIF_IDS # Keep this import here as it's specific to __str__
 
         if self.stoufferIDs:
             ineligible_ids = [motif_id for motif_id in self.motifs if motif_id not in STOUFFER_MOTIF_IDS]
         else:
-            ineligible_ids = [1,2,3]
+            ineligible_ids = [1,2,3] # Default if not using Stouffer IDs
 
         output = ""
 
-        if self.motifs != dict():
+        if self.motifs: # Check if motifs dictionary is not empty
             output = output + " ".join(['motif',
                                'real',
                                'rand',
@@ -105,7 +104,8 @@ class NetworkStats(object):
             # set up the data itself
             for m in sorted(self.motifs.keys()):
 
-                if len(ineligible_ids) == 0:
+                # Ensure STOUFFER_MOTIF_IDS is accessible and motifname is properly assigned
+                if self.stoufferIDs and m in STOUFFER_MOTIF_IDS: # Check if stoufferIDs is True and motif_id exists in map
                     motifname = STOUFFER_MOTIF_IDS[m]
                 else:
                     motifname = m
@@ -120,12 +120,13 @@ class NetworkStats(object):
                                   ]) + '\n'
             output = output + '\n'
 
-        if self.nodes[self.nodes.keys()[0]].motifs != dict():
+        # Check if nodes dictionary is not empty before attempting to access its first key
+        if self.nodes and self.nodes[list(self.nodes.keys())[0]].motifs != dict():
             # set up a header
-            if len(ineligible_ids) == 0:
-                output = output + " ".join(["node"]+list(map(str, [STOUFFER_MOTIF_IDS[mid] for mid in sorted(self.nodes[self.nodes.keys()[0]].motifs.keys())])))
+            if len(ineligible_ids) == 0: # This condition seems inverted based on original logic, assuming it means 'if all motifs are eligible'
+                output = output + " ".join(["node"]+list(map(str, [STOUFFER_MOTIF_IDS[mid] for mid in sorted(self.nodes[list(self.nodes.keys())[0]].motifs.keys())])))
             else:
-                output = output + " ".join(["node"]+list(map(str,sorted(self.nodes[self.nodes.keys()[0]].motifs.keys()))))
+                output = output + " ".join(["node"]+list(map(str,sorted(self.nodes[list(self.nodes.keys())[0]].motifs.keys()))))
 
             output = output + '\n'
 
@@ -139,26 +140,28 @@ class NetworkStats(object):
                     output = output + " ".join([str(self.nodes[m].id)] + list(map(str,[j for i,j in sorted(self.nodes[m].motifs.items())]))) + '\n'
                 output = output + '\n'
 
-            if self.links[self.links.keys()[0]].motifs != dict():
-                # set up a header
-                output = output + " ".join(["link"]+list(map(str,sorted(self.links[self.links.keys()[0]].motifs.keys()))))
+        # Check if links dictionary is not empty before attempting to access its first key
+        if self.links and self.links[list(self.links.keys())[0]].motifs != dict():
+            # set up a header
+            # Corrected to use list(self.links.keys())[0]
+            output = output + " ".join(["link"]+list(map(str,sorted(self.links[list(self.links.keys())[0]].motifs.keys()))))
+            output = output + '\n'
+
+            if self.weighted:
+                # set up the data itself
+                for m in sorted(self.links.keys()):
+                    output = output + " ".join([str(self.links[m].id)] + list(map(str,[j for i,j in sorted(self.links[m].weighted_motifs.items())]))) + '\n'
+                output = output + '\n'
+            else:
+                for m in sorted(self.links.keys()):
+                    output = output + " ".join([str(self.links[m].id)] + list(map(str,[j for i,j in sorted(self.links[m].motifs.items())]))) + '\n'
                 output = output + '\n'
 
-                if self.weighted:
-                    # set up the data itself
-                    for m in sorted(self.links.keys()):
-                        output = output + " ".join([str(self.links[m].id)] + list(map(str,[j for i,j in sorted(self.links[m].weighted_motifs.items())]))) + '\n'
-                    output = output + '\n'
-                else:
-                    # set up the data itself
-                    for m in sorted(self.links.keys()):
-                        output = output + " ".join([str(self.links[m].id)] + list(map(str,[j for i,j in sorted(self.links[m].motifs.items())]))) + '\n'
-                    output = output + '\n'
 
-
-        if self.nodes[self.nodes.keys()[0]].roles != dict():
+        # Check if nodes dictionary is not empty before attempting to access its first key for roles
+        if self.nodes and self.nodes[list(self.nodes.keys())[0]].roles != dict():
             # set up a header
-            output = output+" ".join(["node"]+list(map(str,[role for role in sorted(self.nodes[self.nodes.keys()[0]].roles.keys())])))
+            output = output+" ".join(["node"]+list(map(str,[role for role in sorted(self.nodes[list(self.nodes.keys())[0]].roles.keys())])))
             output = output + '\n'
 
             if self.weighted:
@@ -170,10 +173,10 @@ class NetworkStats(object):
                     output = output + " ".join([str(self.nodes[m].id)] + list(map(str,[j for i,j in sorted(self.nodes[m].roles.items())]))) + '\n'
                 output = output + '\n'
 
-
-            if self.links[self.links.keys()[0]].roles != dict():
+            # Check if links dictionary is not empty before attempting to access its first key for roles
+            if self.links and self.links[list(self.links.keys())[0]].roles != dict():
                 # set up a header
-                output = output + " ".join(["link"]+list(map(str,sorted(self.links[self.links.keys()[0]].roles.keys()))))
+                output = output + " ".join(["link"]+list(map(str,sorted(self.links[list(self.links.keys())[0]].roles.keys()))))
                 output = output + '\n'
 
                 if self.weighted:
@@ -190,5 +193,3 @@ class NetworkStats(object):
 
         # return this ghastly beast
         return(output)
-
-
