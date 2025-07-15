@@ -452,8 +452,19 @@ int single_connected_component(int64 id,int mtf_sz){
   fill_mat_id(M,id);
 
   // collect members of the connected component here
-  int cc[mtf_sz+1];
-  int checked[mtf_sz+1];
+  // Replace VLA with dynamic allocation
+  int *cc = malloc((mtf_sz+1) * sizeof(int));
+  int *checked = malloc((mtf_sz+1) * sizeof(int));
+  
+  // Check for allocation failure
+  if (cc == NULL || checked == NULL) {
+    if (cc) free(cc);
+    if (checked) free(checked);
+    free_matrix(M);
+    free(M);
+    return FALSE; // or handle error appropriately
+  }
+  
   for(i=1;i<=mtf_sz;i++){
     cc[i] = FALSE;
     checked[i] = FALSE;
@@ -478,14 +489,21 @@ int single_connected_component(int64 id,int mtf_sz){
       }
   }
 
+  // Check if all nodes are in the connected component
+  int result = TRUE;
+  for(i=1;i<=mtf_sz;++i)
+    if(cc[i] == FALSE) {
+      result = FALSE;
+      break;
+    }
+
+  // Clean up memory
+  free(cc);
+  free(checked);
   free_matrix(M);
   free(M);     
 
-  for(i=1;i<=mtf_sz;++i)
-    if(cc[i] == FALSE)
-      return FALSE;
-
-  return TRUE;
+  return result;
 }
 
 /********************************************************
