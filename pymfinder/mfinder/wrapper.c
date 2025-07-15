@@ -451,13 +451,13 @@ int single_connected_component(int64 id,int mtf_sz){
   M = init_matrix(mtf_sz);
   fill_mat_id(M,id);
 
-  // collect members of the connected component here
-  int cc[mtf_sz+1];
-  int checked[mtf_sz+1];
-  for(i=1;i<=mtf_sz;i++){
-    cc[i] = FALSE;
-    checked[i] = FALSE;
-  }
+    // collect members of the connected component here
+    int cc[mtf_sz+1];
+    int checked[mtf_sz+1];
+    for(i=1;i<=mtf_sz;i++){
+      cc[i] = FALSE;
+      checked[i] = FALSE;
+    }
 
   // add the first node to the connected component
   cc[1] = TRUE;
